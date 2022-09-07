@@ -3,7 +3,9 @@ package com.ll.exam.app10.app.member.repository;
 import com.ll.exam.app10.app.base.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MemberRepository extends JpaRepository<Member, String> {
+import java.util.Optional;
 
-    Member findByUsername(String username);
+public interface MemberRepository extends JpaRepository<Member, Long> {
+
+    Optional<Member> findByUsername(String username);
 }
