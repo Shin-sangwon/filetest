@@ -1,6 +1,7 @@
 package com.ll.exam.app10.app.member.controller;
 
-import com.ll.exam.app10.app.base.entity.Member;
+
+import com.ll.exam.app10.app.member.repository.Member;
 import com.ll.exam.app10.app.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
