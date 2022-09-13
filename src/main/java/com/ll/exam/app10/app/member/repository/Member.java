@@ -1,5 +1,6 @@
 package com.ll.exam.app10.app.member.repository;
 
+import com.ll.exam.app10.app.base.AppConfig;
 import com.ll.exam.app10.app.base.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.io.File;
 
 @Entity
 @Setter
@@ -29,5 +31,15 @@ public class Member extends BaseEntity {
     private String email;
     private String profileImg;
 
+    public void removeProfileImgOnStorage() {
+        if (profileImg == null || profileImg.trim().length() == 0) return;
 
+        String profileImgPath = getProfileImgPath();
+
+        new File(profileImgPath).delete();
+    }
+
+    private String getProfileImgPath() {
+        return AppConfig.GET_FILE_DIR_PATH + "/" + profileImg;
+    }
 }
