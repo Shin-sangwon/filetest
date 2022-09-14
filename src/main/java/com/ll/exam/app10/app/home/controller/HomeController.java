@@ -15,22 +15,16 @@ import java.security.Principal;
 public class HomeController {
 
     private final MemberService memberService;
-    @RequestMapping("/")
-    public String main(Principal principal, Model model) {
 
-        Member loginedMember = null;
-        String loginedMemberProfileImgUrl = null;
+    @GetMapping("/")
+    public String showMain(Principal principal, Model model) {
 
-        if (principal != null && principal.getName() != null) {
-            loginedMember = memberService.getMemberByUsername(principal.getName());
-        }
+        return "home/main";
+    }
 
-        if (loginedMember != null) {
-            loginedMemberProfileImgUrl = loginedMember.getProfileImgUrl();
-        }
 
-        model.addAttribute("loginedMember", loginedMember);
-        model.addAttribute("loginedMemberProfileImgUrl", loginedMemberProfileImgUrl);
+    @GetMapping("/about")
+    public String showAbout(Principal principal, Model model) {
 
         return "home/main";
     }

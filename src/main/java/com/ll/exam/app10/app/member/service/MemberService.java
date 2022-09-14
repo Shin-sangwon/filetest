@@ -5,37 +5,31 @@ import com.ll.exam.app10.app.member.repository.MemberRepository;
 import com.ll.exam.app10.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-@RequiredArgsConstructor
 @Service
-public class MemberService implements UserDetailsService {
-
+@RequiredArgsConstructor
+public class MemberService {
     @Value("${custom.genFileDirPath}")
     private String genFileDirPath;
 
     private final MemberRepository memberRepository;
 
-    public Member getMemberByUsername(String username){
+    public Member getMemberByUsername(String username) {
         return memberRepository.findByUsername(username).orElse(null);
     }
 
+    private String getCurrentProfileImgDirName() {
+        return "member/" + Util.date.getCurrentDateFormatted("yyyy_MM_dd");
+    }
 
     public Member join(String username, String password, String email, MultipartFile profileImg) {
-        String profileImgDirName = "member/" + Util.date.getCurrentDateFormatted("yyyy_MM_dd");
+        String profileImgDirName = getCurrentProfileImgDirName();
 
         String ext = Util.file.getExt(profileImg.getOriginalFilename());
 
@@ -65,6 +59,12 @@ public class MemberService implements UserDetailsService {
         return member;
     }
 
+    public Member getMemberById(Long id) {
+        return memberRepository.findById(id).orElse(null);
+    }
+
+
+
     public Member join(String username, String password, String email) {
         Member member = Member.builder()
                 .username(username)
@@ -75,20 +75,6 @@ public class MemberService implements UserDetailsService {
         memberRepository.save(member);
 
         return member;
-    }
-
-    public Member getMemberById(Long id) {
-        return memberRepository.findById(id).orElse(null);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByUsername(username).get();
-
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("member"));
-
-        return new User(member.getUsername(), member.getPassword(), authorities);
     }
 
     public long count() {
@@ -102,5 +88,9 @@ public class MemberService implements UserDetailsService {
         memberRepository.save(member);
     }
 
-
+    public void setProfileImgByUrl(Member member, String url) {
+        String filePath = Util.file.downloadImg(url, genFileDirPath + "/" + getCurrentProfileImgDirName() + "/" + UUID.randomUUID());
+        member.setProfileImg(getCurrentProfileImgDirName() + "/" + new File(filePath).getName());
+        memberRepository.save(member);
+    }
 }
