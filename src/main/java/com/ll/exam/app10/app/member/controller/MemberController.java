@@ -1,14 +1,17 @@
 package com.ll.exam.app10.app.member.controller;
 
 
+import com.ll.exam.app10.app.member.dto.MemberContext;
 import com.ll.exam.app10.app.member.repository.Member;
 import com.ll.exam.app10.app.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -64,12 +67,15 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/profile")
-    public String showProfile(Principal principal, Model model) {
-        Member loginedMember = memberService.getMemberByUsername(principal.getName());
-
-        model.addAttribute("loginedMember", loginedMember);
+    public String showProfile(@AuthenticationPrincipal MemberContext memberContext, Model model) {
+        model.addAttribute("memberContext", memberContext);
 
         return "member/profile";
+    }
+
+    @GetMapping("/profile/img/{id}")
+    public String showProfileImg(@PathVariable Long id) {
+        return "redirect:" + memberService.getMemberById(id).getProfileImgUrl();
     }
 
     @GetMapping("/login")
