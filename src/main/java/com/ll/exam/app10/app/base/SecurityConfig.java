@@ -29,8 +29,10 @@ public class SecurityConfig {
                                         .loginPage("/member/login") // GET
                                         .loginProcessingUrl("/member/login") // POST
                         )
+                        .oauth2Login()
+                        .and()
                         .logout(logout -> logout
-                .logoutUrl("/member/logout")
+                        .logoutUrl("/member/logout")
                         );
         return http.build();
     }
