@@ -29,7 +29,16 @@ public class SecurityConfig {
                                         .loginPage("/member/login") // GET
                                         .loginProcessingUrl("/member/login") // POST
                         )
-                        .oauth2Login()
+                        .oauth2Login(
+                                oauth2Login -> oauth2Login
+                                        .loginPage("/member/login")
+                                        .userInfoEndpoint(
+                                                userInfoEndpoint -> userInfoEndpoint
+                                                        .userService(oAuth2UserService)
+                                        )
+
+
+                        )
                         .and()
                         .logout(logout -> logout
                         .logoutUrl("/member/logout")
